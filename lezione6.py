@@ -57,7 +57,7 @@ fine=20
 # Istanziamento di una lista per salvare i valori
 list_1 = []
 
-b = file.get_data(inizio, fine)
+#b = file.get_data(inizio, fine)
 
 a = my_file.get_data(inizio, fine)
 

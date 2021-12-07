@@ -4,7 +4,7 @@ class CSVFile():
         # Programmazione dell'attributo "name"
         self.name = name
     
-    def get_data(self, elenco):
+    def get_data(self):
     # Istanziamento della Lista (è una lista di lista!)
         try:
             file = open("shampo_sales.csv", "r")
@@ -38,9 +38,6 @@ my_file = CSVFile('shampoo_sales.csv')
 print(my_file)
 print('Nome del file: {}'.format(my_file.name))
 
-# Programmazione di una lista di un file
-# Istanziamento di una lista per salvare i valori
-list_1 = []
-# Apertura del file
-a=my_file.get_data(list_1)
+
+a=my_file.get_data()
 print(a)

@@ -11,6 +11,11 @@ class CSVFile():
 
         dati=[]
 
+    #    if type(self.name) != str :
+      #      raise Exception ('il nome deve essere di tipo stringa mentre questo è di tipo {}' .format(type(self.name)))
+      #da completare----------------------------------------------------------
+
+
         file = open(self.name, "r")
         #apro il file
 
@@ -27,16 +32,57 @@ class CSVFile():
         file.close()
 
         return dati 
-                
 
+
+
+#sottoclasse figlia che eredita get_data
+
+class NuemricalCSVFile(CSVFile):
+    
+    def get_data(self):
+        
+        convertitore = super().get_data()
+
+        dati_stringa = []
+
+        for string_row in convertitore:
+            colonna_numerica = []
+
+            for i,elements in enumerate(string_row):
+
+                if i==0:
+                    colonna_numerica.append(elements)
+
+                else:
+                    try:
+                        value = float(elements)
+                        colonna_numerica.append(value)
+
+                    except Exception as e:
+                        print('non sono riuscito a convertire {} in float: {}' .format(elements, e))
+                        break
+
+            if len(colonna_numerica) == len(string_row):
+                dati_stringa.append(colonna_numerica)
+
+        return dati_stringa
+                
 
 #------------------------------------
 #PROGRAMMA PRINCIPALE
 #------------------------------------
 
 
-my_file = CSVFile (name='shampoo_sales.csv')
+my_file = CSVFile (name='5')
 
-print (my_file.name)
+print ('il nome è: {}' .format(my_file.name))
 
-print('contenuto è: {}' .format(my_file.get_data()))
+print('contenuto è:\n {}' .format(my_file.get_data()))
+
+
+
+#file_numerico = NuemricalCSVFile (name = 'shampoo_sales_1.csv')
+
+#print ('il nome è: {}' .format(file_numerico.name))
+
+#print('contenuto è: {}' .format(file_numerico.get_data()))
