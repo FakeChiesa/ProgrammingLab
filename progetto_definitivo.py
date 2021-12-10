@@ -9,11 +9,13 @@ class CSVFile():
     def get_data(self):
         #definisco il get data per leggere le righe
 
-        dati=[]
+        dati = []
 
-    #    if type(self.name) != str :
-      #      raise Exception ('il nome deve essere di tipo stringa mentre questo è di tipo {}' .format(type(self.name)))
-      #da completare----------------------------------------------------------
+        solo_soldi = []
+
+        # if type(self.name) != 'str' :
+            # raise Exception ('il nome deve essere di tipo stringa mentre questo è di tipo {}' .format(type(self.name)))
+      #da completare ----------------------------------------------------------
 
 
         file = open(self.name, "r")
@@ -29,9 +31,43 @@ class CSVFile():
 
                 dati.append(elements)
 
+                solo_soldi.append(float(elements[1]))
+
         file.close()
 
-        return dati 
+        return solo_soldi
+
+
+
+class Model ():
+
+    def fit (self, data):
+        raise NotImplementedError ('Metodo non implementato')
+
+    def previsione (self, data):
+        raise NotImplementedError ('Metodo non implementato')
+
+
+
+class IncrementedModel(Model):
+
+    def previsione(self, data, mesi):
+
+        somma = 0
+
+        lunghezza = len(data)
+
+        for i in range(lunghezza-mesi, lunghezza-1):
+            
+            implemento = data[i+1] - data[i]
+
+            somma += implemento
+
+        implemento_medio = somma / (mesi-1)
+
+        prediction = data[lunghezza-1] + implemento_medio
+
+        return prediction 
 
 
 
@@ -68,16 +104,24 @@ class NuemricalCSVFile(CSVFile):
         return dati_stringa
                 
 
+
+
+
 #------------------------------------
 #PROGRAMMA PRINCIPALE
 #------------------------------------
 
 
-my_file = CSVFile (name='5')
 
-print ('il nome è: {}' .format(my_file.name))
 
-print('contenuto è:\n {}' .format(my_file.get_data()))
+
+
+
+my_file = CSVFile (name='shampoo_sales.csv')
+
+print ('il nome è: {} \n' .format(my_file.name))
+
+print('contenuto è:\n {} \n' .format(my_file.get_data()))
 
 
 
@@ -86,3 +130,10 @@ print('contenuto è:\n {}' .format(my_file.get_data()))
 #print ('il nome è: {}' .format(file_numerico.name))
 
 #print('contenuto è: {}' .format(file_numerico.get_data()))
+
+predict = IncrementedModel ()
+
+mesi = 4
+
+
+print ( 'per il prossimo mese la previsione in base agli ultimi {} la previsione è : {}' .format((mesi), (predict.previsione(my_file.get_data(), mesi) )))

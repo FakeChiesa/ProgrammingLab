@@ -25,6 +25,8 @@ class IncrementedModel(Model):
 
         prediction = data[lunghezza-1] + implemento_medio
 
+        #il -1 serve perche i dati partono da zero mentre la len va da 1 in poi es un array da un el lo scrivi a[0] e ha comunque lunghezza 1 
+
         return prediction
 
 #------------------------------
