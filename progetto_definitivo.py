@@ -48,26 +48,9 @@ class Model ():
         raise NotImplementedError ('Metodo non implementato')
 
 
+from lezione09 import IncrementedModel
 
-class IncrementedModel(Model):
-
-    def previsione(self, data, mesi):
-
-        somma = 0
-
-        lunghezza = len(data)
-
-        for i in range(lunghezza-mesi, lunghezza-1):
-            
-            implemento = data[i+1] - data[i]
-
-            somma += implemento
-
-        implemento_medio = somma / (mesi-1)
-
-        prediction = data[lunghezza-1] + implemento_medio
-
-        return prediction 
+from lezione09 import FitIncrementedModel
 
 
 
@@ -121,7 +104,7 @@ my_file = CSVFile (name='shampoo_sales.csv')
 
 print ('il nome è: {} \n' .format(my_file.name))
 
-print('contenuto è:\n {} \n' .format(my_file.get_data()))
+#print('contenuto è:\n {} \n' .format(my_file.get_data()))
 
 
 
@@ -133,7 +116,15 @@ print('contenuto è:\n {} \n' .format(my_file.get_data()))
 
 predict = IncrementedModel ()
 
-mesi = 4
+mesi = 12
 
 
 print ( 'per il prossimo mese la previsione in base agli ultimi {} la previsione è : {}' .format((mesi), (predict.previsione(my_file.get_data(), mesi) )))
+
+
+
+ModelloFittato = FitIncrementedModel ()
+
+ModelloFittato.fit (my_file.get_data(), mesi)
+
+print(ModelloFittato.previsione(my_file.get_data(), mesi))
