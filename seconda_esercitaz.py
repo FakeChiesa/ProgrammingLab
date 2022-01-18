@@ -8,6 +8,12 @@ class Diff():
         if type(ratio) not in [int, float]:
             raise ExamException('devo dividere per un qualcosa di numerico')
 
+        if ratio == 0:
+            raise ExamException ('non puoi dividere per zero gayyyy')
+
+        if ratio < 0:
+            raise ExamException ('non puoi dividere per zero gayyyy')
+
         self.ratio = ratio
 
     def compute(self, lista):
@@ -25,23 +31,19 @@ class Diff():
 
         NuovaLista = []
 
-        for i in range (lunghezza - self.lenght + 1):
+        for i in range (lunghezza-1):
 
-            p = i
 
             differenza = 0
 
-            for e in range 2:
+            
+            if type(lista[1]) not in [int, float]:
+                raise ExamException("Errore, l'elemento {} non è un valore numerico, ma: {}" .format(lista[i], type(lista[i])) )
 
-                if type(lista[1]) not in [int, float]:
-                    raise ExamException("Errore, l'elemento {} non è un valore numerico, ma: {}" .format(lista[p], type(lista[p])) )
+            if type(lista[i+1]) not in [int, float]:
+                raise ExamException("Errore, l'elemento {} non è un valore numerico, ma: {}" .format(lista[i], type(lista[i])) )
 
-                if type(lista[p+1]) not in [int, float]:
-                    raise ExamException("Errore, l'elemento {} non è un valore numerico, ma: {}" .format(lista[p], type(lista[p])) )
-
-                differenza = lista[p+1] - lista[p]
-
-                p = p + 1
+            differenza = lista[i+1] - lista[i]
 
             risultato = differenza / self.ratio
 
@@ -52,10 +54,8 @@ class Diff():
 
 
 
-diff = Diff()
+#diff = Diff()
 
+#result = diff.compute([2,4,8,16,32])
 
-result = diff.compute([2,4,8,16])
-
-
-print(result)
+#print(result)
