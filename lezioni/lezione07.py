@@ -34,7 +34,7 @@ class CSVFile():
                 dato = elements[0]
                 lista.append(dato)
 
-                for element in elements[1:]:
+                for element in elements[1:2]:
                     value = float(element)
                     # Aggiunta degli elementi alla lista con split di ogni riga su ","
                     lista.append(value)
