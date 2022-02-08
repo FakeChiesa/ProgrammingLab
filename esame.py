@@ -17,58 +17,80 @@ class CSVTimeSeriesFile():
         except:
             raise ExamException('file non esistente')
 
+        
+        prova = open(self.name, "r")
+
+        try:
+            content = prova.read()
+            
+        except:
+            raise ExamException('file vuoto o illeggibile')
+
+
 
         listoflist = []
 
         for line in file:
 
-            if ',' not in line:
+            if line == '\n':
                 pass
-
 
             else:
 
-                elements=line.split(',')
-
-                #elements[-1]=elements[-1].strip()
-
-                errore=0
-
-                try:
-                    passeggeri = float(elements[1])
-                
-                except:
-                    errore = 1
-                    #print('err')
-
-
-                if errore == 1:
+                if ',' not in line:
                     pass
+
 
                 else:
 
-                    if float(elements[1])<=0:
-                        pass
+                    elements=line.split(',')
 
+                    #elements[-1]=elements[-1].strip()
+
+                    if '-' not in elements[0]:
+                        pass
+                    
                     else:
 
-                        #if elements[0] != 'date':
-                        lista=[]
-                        dato = elements[0]
-                        lista.append(dato)
+                        errore=0
 
-                        for element in elements[1:2]:
-
-                            value = float(element)
-
-                                # Aggiunta degli elementi alla lista con split di ogni riga su ","
-                            lista.append(value)
-                        listoflist.append(lista)
+                        try:
+                            passeggeri = float(elements[1])
+                        
+                        except:
+                            errore = 1
+                            #print('err')
 
 
-        # Chiusura del file
+                        if errore == 1:
+                            pass
+
+                        else:
+
+                            if float(elements[1])<=0:
+                                pass
+
+                            else:
+
+                                #if elements[0] != 'date':
+                                lista=[]
+                                dato = elements[0]
+                                lista.append(dato)
+
+                                for element in elements[1:2]:
+
+                                    value = float(element)
+
+                                        # Aggiunta degli elementi alla lista con split di ogni riga su ","
+                                    lista.append(value)
+                                listoflist.append(lista)
+
+
+            # Chiusura del file
         file.close()
-    
+        
+        #print(listoflist)
+
         return (listoflist)
 
 
@@ -138,6 +160,8 @@ def compute_avg_monthly_difference(lista, inizio, fine):
             #print('giro esterno \n')
 
             if float(data[0])==float(inizio):
+
+
 
                 for argument in lista:
 
