@@ -175,6 +175,8 @@ def compute_avg_monthly_difference(lista, inizio, fine):
 
                                             counter = counter+1
 
+                                            print(counter)
+
                 if counter <=1:
                     average.append(0)
                 

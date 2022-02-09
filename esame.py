@@ -13,6 +13,7 @@ class CSVTimeSeriesFile():
 
         try:
             file = open(self.name, "r")
+            #controllo se il file esiste
 
         except:
             raise ExamException('file non esistente')
@@ -22,74 +23,156 @@ class CSVTimeSeriesFile():
 
         try:
             content = prova.read()
+            #controllo se il file è leggibile
             
         except:
-            raise ExamException('file vuoto o illeggibile')
+            raise ExamException('file illeggibile')
+
+
+        if content == '':
+            raise ExamException('file vuoto') 
+            #controllo se il file è vuoto           
 
 
 
         listoflist = []
 
+        controllo = []
+
+        annoprecedente = 0
+
+        meseprecedente = 1
+
+        mesi = [1,2,3,4,5,6,7,8,9,10,11,12]
+
+
         for line in file:
 
             if line == '\n':
                 pass
+                #skippo le linee vuote
 
             else:
 
                 if ',' not in line:
                     pass
+                    #skippo le linee in cui non distingo data e passeggeri
 
 
                 else:
 
                     elements=line.split(',')
 
-                    #elements[-1]=elements[-1].strip()
-
                     if '-' not in elements[0]:
                         pass
-                    
+                        #skippo le date non valide
+
+
                     else:
 
-                        errore=0
+                        if elements[0] in controllo:
+                            raise ExamException('errore, doppio timestamp')
+                        #controllo unicità date e le appendo
+
+
+                        controllo.append(elements[0])
+
+                        controllo1=0
+
+                        controlli=elements[0].split('-')
+                        #splitto date in anni e mesi
+
+                        #if type(controlli[0])!=str:
+                            #pass
+
 
                         try:
-                            passeggeri = float(elements[1])
-                        
+                            years = int(controlli[0])
+                            months = int(controlli[1])
+                            
+                            #controllo convertibilità
+
+                            
                         except:
-                            errore = 1
-                            #print('err')
+                            controllo1 = 1
 
 
-                        if errore == 1:
+                        if controllo1 == 1:
                             pass
 
                         else:
 
-                            if float(elements[1])<=0:
+                            if months not in mesi:
                                 pass
 
                             else:
 
-                                #if elements[0] != 'date':
-                                lista=[]
-                                dato = elements[0]
-                                lista.append(dato)
+                                if annoprecedente > int(controlli[0]):
 
-                                for element in elements[1:2]:
+                                    raise ExamException('annoprecedente maggiore')
+                                    #controllo timestamp anno
 
-                                    value = float(element)
+                                
+                                elif annoprecedente == int(controlli[0]):
+                                    #print(meseprecedente, ">", controlli[1])
+
+                                    if meseprecedente>int(controlli[1]):
+
+                                        #controllo timestamp mesi
+
+                                        raise ExamException('meseprecedente maggiore')
+
+                                    meseprecedente=int(controlli[1])
+                                    #print(meseprecedente)
+
+                                
+                                else:
+                                    meseprecedente = int(controlli[1])
+                                    #inizializzazione primo mese nuovo anno
+
+
+
+
+                                annoprecedente = int(controlli[0])
+
+                                errore=0
+
+                                try:
+                                    passeggeri = int(elements[1])
+                                
+                                except:
+                                    errore = 1
+                                    #print('err')
+
+
+                                if errore == 1:
+                                    pass
+
+                                else:
+
+                                    if int(elements[1])<=0:
+                                        pass
+
+                                    else:
+
+                                        #creo lista da mettere nella lista di liste
+                                        lista=[]
+                                        dato = elements[0]
+                                        lista.append(dato)
+
+
+                                        value = int(elements[1])
 
                                         # Aggiunta degli elementi alla lista con split di ogni riga su ","
-                                    lista.append(value)
-                                listoflist.append(lista)
+
+                                        lista.append(value)
+
+                                        listoflist.append(lista)
 
 
-            # Chiusura del file
+        # Chiusura del file
+
         file.close()
-        
-        #print(listoflist)
 
         return (listoflist)
 
@@ -98,7 +181,16 @@ class CSVTimeSeriesFile():
 
 def compute_avg_monthly_difference(lista, inizio, fine):
 
-    average = []
+    average = [] #lista con le medie
+
+    #controllo tipo lista
+
+    if type(lista)!= list:
+        raise ExamException('non è stata passata una lista')
+        
+
+
+    #controllo tipo inizio e fine
 
     if type(inizio) != str:
         raise ExamException('Errore, primo mese non è string')
@@ -106,9 +198,12 @@ def compute_avg_monthly_difference(lista, inizio, fine):
     if type(fine)!= str:
         raise ExamException('Errore, mese finale non string')
 
+
+    #controllo convertibilità
+
     try:
-        primo = float(inizio)
-        ultimo = float(fine)
+        primo = int(inizio)
+        ultimo = int(fine)
         
 
     except:
@@ -119,13 +214,17 @@ def compute_avg_monthly_difference(lista, inizio, fine):
 
     anni = []
 
+
+    #creo lista con gli anni per controllare che inizio e fine siano presenti
+
     for i in lista:
 
         anno=i[0].split('-')
 
-        anni.append(anno[0])
+        if anno[0] not in anni:
 
-    #print(anni)
+            anni.append(anno[0])
+    
 
     if inizio not in anni:
         raise ExamException('error, inizio non è tra gli anni iterabili')
@@ -133,97 +232,91 @@ def compute_avg_monthly_difference(lista, inizio, fine):
     if fine not in anni:
         raise ExamException('error, fine non compreso')
 
+    
+    #creo un for che funzioni mese per mese
+
+    for mh in range (1,13):
+
+        #azzero indici per poterli riutilizzare
+
+        counter=0
+
+        somma=0
+
+        media=0   
+
+
+        #for che cicla tutti gli elementi della lista di liste
+
+        for element in lista:
+
+
+            #divido anno e mese
+
+            data=element[0].split('-')
+
+
+            #ciclo solo nell'intervallo richiesto degli anni
+
+            if int(data[0])<int(inizio) or int(data[0])>int(fine):
+
+                pass
+
+            else:
+
+                #ciclo solo sul mese interessato ovvero quello di cui devo fare la media
+
+                if mh == int(data[1]):
+
+                    
+                    #altro ciclo per confrontare i mesi interessati
+                    for argument in lista:
+
+
+                        #split per controllare i mesi
+
+                        calendar=argument[0].split('-')
+
+
+                        #non considero gli anni fuori dall'intervallo
+
+                        if int(calendar[0])<int(inizio) or int(calendar[0])>int(fine):
+
+                            pass
+
+                        else:
+
+                            #prendo solo la riga con il mese uguale e anno che varia di uno
+
+                            if calendar[1]==data[1]:
+
+                                
+                                #prendo lo stesso mese di anno i e anno i+1 così da fare la media tra i due
+                                if int(calendar[0]) == int(data[0])+1:
+
+                                #sommo alla somma e aumento il counter per dividere
+
+                                    somma=somma+(int(argument[1])-int(element[1]))
+
+                                    counter = counter+1
         
+        #metto zero se ho meno di un mese da esaminare
+
+        if counter <1:
+            average.append(0)
 
 
-    for element in lista:
+        #calcolo la media e la appendo
+                                    
+        else:
+            media=somma/counter
+            average.append(media)
 
 
-        data=element[0].split('-')
-
-
-        if float(data[0])<float(inizio) or float(data[0])>float(fine):
-            #print (data[0], 'fuori')
-            pass
-
-        else: 
-            #print( data[0],data[1], element[1])
-
-            #print ('giro', data[1], element[1])
-
-            counter=0
-
-            somma=0
-
-            media=0
-
-            #print('giro esterno \n')
-
-            if float(data[0])==float(inizio):
-
-
-
-                for argument in lista:
-
-                    calendar=argument[0].split('-')
-
-
-                    if float(calendar[0])<float(inizio) or float(calendar[0])>float(fine):
-
-                        pass
-
-                    else:
-
-                        if calendar[1]==data[1]:
-                            #print('giro interno' , calendar[1],'     ', calendar[0],'    ', argument[1])
-
-
-                            for oggetti in lista:
-
-                                periodo=oggetti[0].split('-')
-
-
-                                if float(periodo[0])<float(inizio) or float(periodo[0])>float(fine):
-
-                                    pass
-
-                                else:
-
-                                    if periodo[1] == calendar[1]:
-
-                                        if float(periodo[0]) == float(calendar[0])+1:
-
-                                            #print('giro internissimo', oggetti[1])
-
-                                            somma=somma+(float(oggetti[1])-float(argument[1]))
-
-                                            counter = counter+1
-
-                if counter <=1:
-                    average.append(0)
-                
-                else:
-                    media=somma/counter
-                    average.append(media)
-
-
-
+    #ritorno la lista con le medie
     return average
 
 
 
 
 
-
-
-
-
-time_series_file = CSVTimeSeriesFile(name='data.csv')
-
-time_series = time_series_file.get_data()
-
-#print(time_series)
-
-computare = compute_avg_monthly_difference(time_series, '1949', '1951')
-
-print(computare)
