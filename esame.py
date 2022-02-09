@@ -320,3 +320,14 @@ def compute_avg_monthly_difference(lista, inizio, fine):
 
 
 
+
+
+time_series_file = CSVTimeSeriesFile(name='data.csv')
+
+time_series = time_series_file.get_data()
+
+#print(time_series)
+
+computare = compute_avg_monthly_difference(time_series, '1949', '1951')
+
+print(computare)
